@@ -60,16 +60,16 @@ __constant__ float kernelData[M_CONST * C_CONST * K_CONST * K_CONST];
 
 __global__ void conv_forward_kernel(float *y, const float *x, const float *k, const int B, const int M, const int C, const int H, const int W, const int K)
 {
-    extern __shared__ float s_data[];
+    extern __shared__ float X_s[];
     const int INPUT_TILE_WIDTH = TILE_WIDTH + K -1;
 
     const int H_out = H - K + 1;
     const int W_out = W - K + 1;
 
-#define y4d(i3, i2, i1, i0) y[(i3) * (M * H_out * W_out) + (i2) * (H_out * W_out) + (i1) * (W_out) + i0]
-#define x4d(i3, i2, i1, i0) x[(i3) * (C * H * W) + (i2) * (H * W) + (i1) * (W) + i0]
-#define k4d(i3, i2, i1, i0) kernelData[(i3) * (C * K * K) + (i2) * (K * K) + (i1) * (K) + i0]
-#define smem(i2, i1, i0) s_data[(i2) * (INPUT_TILE_WIDTH * INPUT_TILE_WIDTH) + (i1) * INPUT_TILE_WIDTH + i0]
+    #define y4d(i3, i2, i1, i0) y[(i3) * (M * H_out * W_out) + (i2) * (H_out * W_out) + (i1) * (W_out) + i0]
+    #define x4d(i3, i2, i1, i0) x[(i3) * (C * H * W) + (i2) * (H * W) + (i1) * (W) + i0]
+    #define k4d(i3, i2, i1, i0) kernelData[(i3) * (C * K * K) + (i2) * (K * K) + (i1) * (K) + i0]
+    #define smem(i2, i1, i0) X_s[(i2) * (INPUT_TILE_WIDTH * INPUT_TILE_WIDTH) + (i1) * INPUT_TILE_WIDTH + i0]
     
     int H_grid = ceil(float(H_out) / TILE_WIDTH);
     int W_grid = ceil(float(W_out) / TILE_WIDTH); 

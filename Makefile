@@ -1,8 +1,8 @@
-m2:		m2.o custom
-		nvcc -o m2 -lm -lcuda -lrt m2.o network_init.o src/network.o src/mnist.o src/layer/*.o src/loss/*.o src/layer/custom/*.o -I ../libgputk/ -I./
+cpu:		cpu.o custom
+		nvcc -o cpu -lm -lcuda -lrt cpu.o network_init.o src/network.o src/mnist.o src/layer/*.o src/loss/*.o src/layer/custom/*.o -I ../libgputk/ -I./
 
-m2.o:		m2.cc
-		nvcc --compile m2.cc -I ../libgputk/ -I./
+cpu.o:		cpu.cc
+		nvcc --compile cpu.cc -I ../libgputk/ -I./
 
 network_init.o:    network_init.cc
 		nvcc --compile network_init.cc -I ../libgputk/ -I./
@@ -28,15 +28,15 @@ custom:
 		nvcc --compile src/layer/custom/cpu-new-forward.cc -o src/layer/custom/cpu-new-forward.o -I ../libgputk/ -I./
 		nvcc --compile src/layer/custom/gpu-utils.cu -o src/layer/custom/gpu-utils.o -I ../libgputk/ -I./
 		nvcc --compile src/layer/custom/gpu-new-forward-basic.cu -o src/layer/custom/gpu-new-forward-basic.o -I ../libgputk/ -I./
-
+		
 loss:           src/loss/cross_entropy_loss.cc src/loss/mse_loss.cc
 		nvcc --compile src/loss/cross_entropy_loss.cc -o src/loss/cross_entropy_loss.o -I ../libgputk/ -I./
 		nvcc --compile src/loss/mse_loss.cc -o src/loss/mse_loss.o -I ../libgputk/ -I./
 
 
 clean:
-		rm m2
-		rm m2.o
+		rm cpu
+		rm cpu.o
 
-run: 		m2
-		./m2 1000
+run: 		cpu
+		./cpu 1000
