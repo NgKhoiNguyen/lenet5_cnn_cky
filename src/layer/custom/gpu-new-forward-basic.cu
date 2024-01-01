@@ -138,6 +138,7 @@ __host__ void GPUInterface::conv_forward_gpu(float *device_y, const float *devic
 
     const int H_out = H - K + 1;
     const int W_out = W - K + 1;
+    GpuTimer timer;
 
     int H_grid = ceil(1.0*H_out / TILE_WIDTH);
     int W_grid = ceil(1.0*W_out / TILE_WIDTH);
@@ -151,7 +152,11 @@ __host__ void GPUInterface::conv_forward_gpu(float *device_y, const float *devic
 
 
     //launch the kernel
+    timer.Start();
     conv_forward_kernel<<<numBlocksInGrid, numThreadsPerBlock>>>(device_y, device_x, device_k, B, M, C, H, W, K);
+    timer.Stop();
+    float time = timer.Elapsed();
+    std::cout << "Processing time: " << time << std::endl;
 }
 
 
