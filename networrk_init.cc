@@ -8,7 +8,7 @@
  * Fall 2020
  */
 
-#include "ece408net.h"
+#include "network_init.h"
 
 Network createNetwork_CPU(bool customCPUConv)
 {

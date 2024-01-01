@@ -1,11 +1,11 @@
 m2:		m2.o custom
-		nvcc -o m2 -lm -lcuda -lrt m2.o ece408net.o src/network.o src/mnist.o src/layer/*.o src/loss/*.o src/layer/custom/*.o -I ../libgputk/ -I./
+		nvcc -o m2 -lm -lcuda -lrt m2.o network_init.o src/network.o src/mnist.o src/layer/*.o src/loss/*.o src/layer/custom/*.o -I ../libgputk/ -I./
 
 m2.o:		m2.cc
 		nvcc --compile m2.cc -I ../libgputk/ -I./
 
-ece408net.o:    ece408net.cc
-		nvcc --compile ece408net.cc -I ../libgputk/ -I./
+network_init.o:    network_init.cc
+		nvcc --compile network_init.cc -I ../libgputk/ -I./
 
 network.o:	src/network.cc
 		nvcc --compile src/network.cc -o src/network.o -I ../libgputk/ -I./

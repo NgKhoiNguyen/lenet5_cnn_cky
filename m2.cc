@@ -1,4 +1,4 @@
-#include "ece408net.h"
+#include "network_init.h"
 
 void inference_only(int batch_size) {
 
