@@ -149,8 +149,8 @@ __host__ void GPUInterface::conv_forward_gpu_prolog(const float *host_y, const f
 __host__ void GPUInterface::conv_forward_gpu(float *device_y, const float *device_x, const float *device_k, const int B, const int M, const int C, const int H, const int W, const int K)
 {
     // Set the kernel dimensions and call the kernel
-    std::cout << "Constant-shared-memory" << std::endl;
-
+    std::cout << "Shared-memory" << std::endl;
+    GpuTimer timer;
     const int H_out = H - K + 1;
     const int W_out = W - K + 1;
 
@@ -166,9 +166,14 @@ __host__ void GPUInterface::conv_forward_gpu(float *device_y, const float *devic
 
     // Grid size
     dim3 gridSize(B, M, Z);
-
+    
     //launch the kernel
+    timer.Start();
     conv_forward_kernel<<<gridSize, blockSize, smem_size>>>(device_y, device_x, device_k, B, M, C, H, W, K);
+    timer.Stop();
+    float time = timer.Elapsed();
+
+    std::cout << "Processing time: " << time << std::endl;
 }
 
 

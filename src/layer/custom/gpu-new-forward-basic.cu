@@ -89,7 +89,7 @@ __global__ void conv_forward_kernel(float *y, const float *x, const float *k, co
                     accum += x4d(b, c, h+p, w+q) * k4d(m, c, p, q); // 4 dimensions macro resolve thread index
         }
         y4d(b,m,h,w) = accum;
-    } // endif (h < H_out && w < W_out)
+    }
 
     #undef y4d
     #undef x4d
@@ -112,14 +112,14 @@ __host__ void GPUInterface::conv_forward_gpu_prolog(const float *host_y, const f
     int outputSize = B * M * H_out * W_out * sizeof(float); // output feature map is M
     int maskSize = M * C * K * K * sizeof(float); // C * M filter Maps of size K*K
 
-    cudaMalloc((void **) device_x_ptr, inputSize);
-    cudaMalloc((void **) device_y_ptr, outputSize);
-    cudaMalloc((void **) device_k_ptr, maskSize);
+    CHECK(cudaMalloc((void **) device_x_ptr, inputSize));
+    CHECK(cudaMalloc((void **) device_y_ptr, outputSize));
+    CHECK(cudaMalloc((void **) device_k_ptr, maskSize));
 
     // Copy Inout data to device
-    cudaMemcpy(*device_x_ptr, host_x, inputSize, cudaMemcpyHostToDevice);
+    CHECK(cudaMemcpy(*device_x_ptr, host_x, inputSize, cudaMemcpyHostToDevice));
     // Copy Mask data to device
-    cudaMemcpy(*device_k_ptr, host_k, maskSize, cudaMemcpyHostToDevice);
+    CHECK(cudaMemcpy(*device_k_ptr, host_k, maskSize, cudaMemcpyHostToDevice));
 
     // Useful snippet for error checking
     // cudaError_t error = cudaGetLastError();
@@ -169,12 +169,12 @@ __host__ void GPUInterface::conv_forward_gpu_epilog(float *host_y, float *device
 
     int outputSize = B * M * H_out * W_out * sizeof(float);
 
-    cudaMemcpy(host_y, device_y, outputSize, cudaMemcpyDeviceToHost);
+    CHECK(cudaMemcpy(host_y, device_y, outputSize, cudaMemcpyDeviceToHost));
 
     // Free device memory
-    cudaFree(device_x);
-    cudaFree(device_y);
-    cudaFree(device_k);
+    CHECK(cudaFree(device_x));
+    CHECK(cudaFree(device_y));
+    CHECK(cudaFree(device_k));
 }
 
 
