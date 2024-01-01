@@ -180,7 +180,6 @@ __host__ void GPUInterface::conv_forward_gpu(float *device_y, const float *devic
 __host__ void GPUInterface::conv_forward_gpu_epilog(float *host_y, float *device_y, float *device_x, float *device_k, const int B, const int M, const int C, const int H, const int W, const int K)
 {
     // Copy the output back to host
-    
     const int H_out = H - K + 1;
     const int W_out = W - K + 1;
 
