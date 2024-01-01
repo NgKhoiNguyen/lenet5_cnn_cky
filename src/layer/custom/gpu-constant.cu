@@ -19,6 +19,43 @@
     }\
 }
 
+struct GpuTimer
+{
+    cudaEvent_t start;
+    cudaEvent_t stop;
+
+    GpuTimer()
+    {
+        cudaEventCreate(&start);
+        cudaEventCreate(&stop);
+    }
+
+    ~GpuTimer()
+    {
+        cudaEventDestroy(start);
+        cudaEventDestroy(stop);
+    }
+
+    void Start()
+    {
+        cudaEventRecord(start, 0);
+        cudaEventSynchronize(start);
+    }
+
+    void Stop()
+    {
+        cudaEventRecord(stop, 0);
+    }
+
+    float Elapsed()
+    {
+        float elapsed;
+        cudaEventSynchronize(stop);
+        cudaEventElapsedTime(&elapsed, start, stop);
+        return elapsed;
+    }
+};
+
 __constant__ float kernelData[M_CONST * C_CONST * K_CONST * K_CONST];
 
 __global__ void conv_forward_kernel(float *y, const float *x, const float *k, const int B, const int M, const int C, const int H, const int W, const int K)
@@ -84,6 +121,7 @@ __host__ void GPUInterface::conv_forward_gpu(float *device_y, const float *devic
 {
     // Set the kernel dimensions and call the kernel
     std::cout << "Constant-memory" << std::endl;
+    GpuTimer timer;
 
     const int H_out = H - K + 1;
     const int W_out = W - K + 1;
@@ -99,7 +137,11 @@ __host__ void GPUInterface::conv_forward_gpu(float *device_y, const float *devic
     dim3 gridSize(B, M, Z);
 
     //launch the kernel
+    timer.Start();
     conv_forward_kernel<<<gridSize, blockSize>>>(device_y, device_x, device_k, B, M, C, H, W, K);
+    timer.Stop();
+    float time = timer.Elapsed();
+    std::cout << "Processing time: " << time << std::endl; 
 }
 
 
