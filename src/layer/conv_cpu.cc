@@ -40,7 +40,7 @@ void Conv_CPU::forward(const Matrix& bottom) {
   //Stop timer
   auto end_time = std::chrono::high_resolution_clock::now();
   std::chrono::duration<float, std::milli> duration = (end_time-start_time);
-  std::cout<<"Op Time: " << duration.count() << " ms"<<std::endl;
+  std::cout<<"Op Time: " << duration.count() << " ms"<<std::endl << std::endl;
 
 }
 
