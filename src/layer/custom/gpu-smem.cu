@@ -55,6 +55,7 @@ struct GpuTimer
         return elapsed;
     }
 };
+
 __constant__ float kernelData[M_CONST * C_CONST * K_CONST * K_CONST];
 
 __global__ void conv_forward_kernel(float *y, const float *x, const float *k, const int B, const int M, const int C, const int H, const int W, const int K)

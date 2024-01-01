@@ -2,7 +2,6 @@
 #include <iostream>
 #include "gpu-new-forward.h"
 
-
 #define TILE_WIDTH 16
 
 #define CHECK(call)                                               \
